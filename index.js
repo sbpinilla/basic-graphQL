@@ -13,7 +13,12 @@ const schema = buildSchema(`
     type Query{
         message: String
         course(id:Int!):Course
-        courses(topit:String):[Course]
+        courses(topic:String):[Course]
+    }
+
+    type Mutation {
+        updateCourseTopic(id: Int!, topic: String!): Course
+
     }
 
     type Course{
@@ -47,10 +52,21 @@ let getCourses = (args) => {
     
 };
 
+let updateCourseTopic = ({id, topic}) =>{
+    courses.map(course => {
+        if(course.id === id){
+            course.topic = topic;
+            return course;
+        }
+    })
+    return courses.filter(course => course.id === id )[0];
+}
+
 const root = {
-    message:()=> "Hola mundo",
-    course: getCourse,
-    courses :getCourses
+    message : ()=> "Hola mundo",
+    course : getCourse,
+    courses : getCourses,
+    updateCourseTopic : updateCourseTopic,
 };
 
 app.use("/graphql",express_graphql({
